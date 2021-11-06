@@ -169,10 +169,27 @@ public class CliPlayer implements Player {
 		this.canChooseWin = canChooseWin;
 		this.canPass = canPass;
 		viewFocusAndOptions();
-
+		
 		choseAction = null;
 		try {
-			view.getCliView().addCharHandler(choosingHandler, true);
+			getChoseAction();
+
+			// view.getCliView().addCharHandler(choosingHandler, true);
+
+			// focusedChoice = actionTilesChoices.get(0);
+			// choseAction = new PlayerAction(contextView.getMyLocation(),
+			// 			actionChoices.get(focusedChoice).get(0), focusedChoice);
+			
+			// if (Arrays.asList(chooseActionTypes).size() == 1 && 
+			// 		Arrays.asList(chooseActionTypes).contains(DRAW))
+			// 	choseAction = new PlayerAction(contextView.getMyLocation(), DRAW);
+			// else {
+			// 	while(true) {
+			// 		if (choseAction != null) {
+			// 			break;
+			// 		}
+			// 	}
+			// }
 		} finally {
 			actionChoices.clear();
 			actionTilesChoices.clear();
@@ -183,6 +200,25 @@ public class CliPlayer implements Player {
 		}
 
 		return choseAction;
+	}
+	
+	// private final CharHandler lock = c -> { return IGNORE; };
+	private Object lock = new Object();
+
+	private void getChoseAction() throws InterruptedException {
+		System.out.printf("\ngetChoseAction\n");
+		// lock = null;
+		synchronized (lock) {
+			System.out.printf("\nsynchronized\n");
+			try {
+				while (!actionChoices.isEmpty())
+					lock.wait();
+			} finally {
+				//charHandlers.remove(handler);
+			}
+			System.out.printf("\nsynchronized end\n");
+		}
+		System.out.printf("\ngetChoseAction end\n");
 	}
 
 	private static final Comparator<Set<Tile>> TILES_CHOISE_COMPARATOR = (set1,

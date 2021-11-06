@@ -149,17 +149,21 @@ class CliView {
 	 */
 	public void addCharHandler(CharHandler handler, boolean wait)
 			throws InterruptedException {
+		System.out.printf("\naddCharHandler()\n");
 		charHandlers.add(handler);
 		if (wait) {
 			synchronized (handler) {
+				System.out.printf("\nsynchronized\n");
 				try {
 					while (charHandlers.contains(handler))
 						handler.wait();
 				} finally {
 					charHandlers.remove(handler);
 				}
+				System.out.printf("\nsynchronized end\n");
 			}
 		}
+		System.out.printf("\naddCharHandler() end\n");
 	}
 
 	/**

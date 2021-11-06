@@ -117,16 +117,22 @@ public abstract class AbstractGameStrategy implements GameStrategy {
 		if (choises.contains(DRAW_BOTTOM))
 			return new PlayerAction(location, DRAW_BOTTOM);
 		if (choises.contains(DISCARD)) {
-			Tile tileToDiscard;
-			Action lastAction = context.getLastAction();
-			if (context.getLastActionLocation() == location
-					&& DRAW.matchBy(lastAction.getType())) {
-				tileToDiscard = ((PlayerAction) lastAction).getTile();
-			} else {
-				tileToDiscard = context.getPlayerInfoByLocation(location)
-						.getAliveTiles().iterator().next();
+			try {
+				Tile tileToDiscard;
+				Action lastAction = context.getLastAction();
+				if (context.getLastActionLocation() == location
+						&& DRAW.matchBy(lastAction.getType())) {
+					//tileToDiscard = ((PlayerAction) lastAction).getTile();
+					tileToDiscard = context.getPlayerInfoByLocation(location).getLastDrawedTile();
+				} else {
+					tileToDiscard = context.getPlayerInfoByLocation(location)
+							.getAliveTiles().iterator().next();
+				}
+				return new PlayerAction(location, DISCARD, tileToDiscard);
+			} catch (Exception e) {
+				//System.out.println("\n" + e.toString());
+				return null;
 			}
-			return new PlayerAction(location, DISCARD, tileToDiscard);
 		}
 		return null;
 	}
